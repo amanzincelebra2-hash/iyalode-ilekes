@@ -1,0 +1,39 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Onde as fotos novas são salvas quando você faz upload pelo painel.
+# Deixamos na raiz do site, junto com as fotos que já existem.
+media_folder: ""
+public_folder: ""
+
+locale: "pt"
+
+collections:
+  - name: "produtos"
+    label: "Produtos"
+    files:
+      - file: "content/produtos.json"
+        label: "Catálogo de Produtos"
+        name: "catalogo"
+        fields:
+          - label: "Lista de produtos"
+            name: "produtos"
+            widget: "list"
+            summary: "{{fields.categoria}} — {{fields.nome}} (R$ {{fields.preco}})"
+            fields:
+              - label: "Categoria (nome da aba no site)"
+                name: "categoria"
+                widget: "string"
+                hint: "Digite o nome de uma categoria já existente (ex: Conjuntos, Ilekês) para adicionar a peça nela, ou digite um nome novo (ex: Colares) para criar uma aba nova automaticamente."
+              - label: "Nome da peça"
+                name: "nome"
+                widget: "string"
+              - label: "Preço (R$)"
+                name: "preco"
+                widget: "string"
+                hint: "Só números e vírgula, ex: 80,00"
+              - label: "Foto"
+                name: "img"
+                widget: "image"
+                hint: "Arraste a foto aqui ou escolha do computador. Ela é enviada direto para o site."

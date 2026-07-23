@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel — Iyalodê Ilekês</title>
+
+<!-- ============================================================
+     PAINEL DE GERENCIAMENTO — não é o site, é uma ferramenta
+     para te ajudar a montar o código dos produtos sem precisar
+     editar o index.html na mão.
+
+     COMO USAR:
+     1. Coloque a foto nova dentro desta mesma pasta.
+     2. Abra este arquivo (duplo clique) e preencha o formulário.
+     3. Clique em "Adicionar" — a peça aparece na lista abaixo.
+     4. Repita para quantas peças quiser (edite/remova se precisar).
+     5. Clique em "Copiar código" no final da página.
+     6. Abra o index.html num editor de texto, ache o trecho que
+        começa em "const CATEGORIAS = {" e termina em "};",
+        apague esse trecho inteiro e cole o que você copiou.
+     7. Salve o index.html e arraste a pasta de novo no Netlify.
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body { background:#050505; }
+  .serif { font-family:'Playfair Display', Georgia, serif; }
+  .sans { font-family:'Jost', sans-serif; }
+  .gold { color:#c9a227; }
+  input, select, textarea {
+    background:#111; border:1px solid rgba(255,255,255,.15); color:#eee;
+  }
+  input:focus, select:focus { outline:none; border-color:#c9a227; }
+  .card-item { border:1px solid rgba(255,255,255,.1); }
+  .btn-gold { background:#c9a227; color:#050505; }
+  .btn-gold:hover { background:#e0be4a; }
+</style>
+</head>
+
+<body class="text-neutral-200 antialiased sans">
+
+<div class="max-w-4xl mx-auto px-6 py-12">
+
+  <div class="text-center mb-10">
+    <p class="sans text-xs uppercase tracking-[.3em] gold mb-2">Painel de Gerenciamento</p>
+    <h1 class="serif text-3xl md:text-4xl text-white">Produtos — Iyalodê Ilekês</h1>
+    <p class="text-neutral-500 text-sm mt-3 max-w-xl mx-auto leading-relaxed">
+      Esta página não é o site. É uma ferramenta para montar o código dos produtos.
+      Veja o passo a passo completo nos comentários do arquivo, ou siga o resumo abaixo.
+    </p>
+  </div>
+
+  <!-- Instruções resumidas -->
+  <div class="card-item rounded p-5 mb-10 text-sm text-neutral-400 leading-relaxed">
+    <b class="text-white">Resumo rápido:</b>
+    1) coloque a foto na pasta do site → 2) preencha o formulário abaixo → 3) clique em Adicionar →
+    4) quando terminar todas as peças, clique em "Copiar código" no final → 5) cole no lugar do
+    bloco <code class="text-[#c9a227]">CATEGORIAS</code> dentro do <code class="text-[#c9a227]">index.html</code> →
+    6) suba a pasta atualizada no Netlify.
+  </div>
+
+  <!-- Formulário -->
+  <div class="card-item rounded p-6 mb-10">
+    <h2 class="serif text-xl text-white mb-5">Adicionar / editar peça</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="text-xs uppercase tracking-widest text-neutral-500">Categoria</label>
+        <select id="f-categoria" class="w-full rounded px-3 py-2 mt-1">
+          <option value="conjuntos">Conjuntos</option>
+          <option value="ilekes">Ilekês</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs uppercase tracking-widest text-neutral-500">Preço (só números, ex: 80,00)</label>
+        <input id="f-preco" type="text" placeholder="80,00" class="w-full rounded px-3 py-2 mt-1" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="text-xs uppercase tracking-widest text-neutral-500">Nome da peça</label>
+        <input id="f-nome" type="text" placeholder="Conjunto Oxum" class="w-full rounded px-3 py-2 mt-1" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="text-xs uppercase tracking-widest text-neutral-500">
+          Foto (escolha o arquivo só para pegar o nome certo — depois confirme que ele está salvo na pasta do site)
+        </label>
+        <input id="f-arquivo-picker" type="file" accept="image/*" class="w-full text-xs text-neutral-400 mt-1" />
+        <input id="f-arquivo" type="text" placeholder="Conjunto Oxum 80,00.jpeg" class="w-full rounded px-3 py-2 mt-2" />
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="adicionarOuSalvar()" id="btn-add" class="btn-gold text-xs uppercase tracking-widest px-6 py-3 rounded transition-colors">
+        Adicionar
+      </button>
+      <button onclick="limparFormulario()" class="text-xs uppercase tracking-widest px-6 py-3 rounded border border-white/15 text-neutral-400 hover:text-white transition-colors">
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div class="mb-10">
+    <h2 class="serif text-xl text-white mb-5">Conjuntos <span id="count-conjuntos" class="text-neutral-500 text-sm"></span></h2>
+    <div id="lista-conjuntos" class="grid sm:grid-cols-2 gap-3 mb-10"></div>
+
+    <h2 class="serif text-xl text-white mb-5">Ilekês <span id="count-ilekes" class="text-neutral-500 text-sm"></span></h2>
+    <div id="lista-ilekes" class="grid sm:grid-cols-2 gap-3"></div>
+  </div>
+
+  <!-- Saída do código -->
+  <div class="card-item rounded p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="serif text-xl text-white">Código para colar no index.html</h2>
+      <button onclick="copiarCodigo()" class="btn-gold text-xs uppercase tracking-widest px-6 py-3 rounded transition-colors">
+        Copiar código
+      </button>
+    </div>
+    <textarea id="saida" readonly class="w-full h-64 rounded px-3 py-3 text-xs font-mono leading-relaxed"></textarea>
+    <p id="copiado" class="text-xs gold mt-2 hidden">Copiado! Agora cole no index.html no lugar do bloco CATEGORIAS.</p>
+  </div>
+
+</div>
+
+<script>
+/* ---------- Dados atuais (os mesmos que já estão no index.html) ---------- */
+let CATEGORIAS = {
+  conjuntos: [
+    { nome: "Conjunto Pombogira 1", preco: "85,00", img: "Conjunto Pombogira 1 85,00.jpeg" },
+    { nome: "Conjunto Cigana", preco: "80,00", img: "Conjunto Cigana 80,00.jpeg" },
+    { nome: "Conjunto Pombogira 2", preco: "80,00", img: "Conjunto Pombogira 2 80,00.jpeg" },
+    { nome: "Conjunto Pombogira 3", preco: "80,00", img: "Conjunto Pombogira 3 80,00.jpeg" },
+    { nome: "Conjunto Pombogira 4", preco: "75,00", img: "Conjunto Pombogira 4 75,00.jpeg" },
+    { nome: "Conjunto Pombogira 5", preco: "80,00", img: "Conjunto Pombogira 5 80,00.jpeg" },
+    { nome: "Conjunto Pombogira 6", preco: "80,00", img: "Conjunto Pombogira 6 80,00.jpeg" },
+    { nome: "Conjunto Boa Sorte 1", preco: "80,00", img: "Conjunto boa sorte 1 80,00.jpeg" },
+    { nome: "Conjunto Boa Sorte 2", preco: "75,00", img: "Conjunto boa sorte 2 75,00.jpeg" },
+    { nome: "Conjunto Orixás", preco: "75,00", img: "Conjunto orixás 75,00.jpeg" },
+    { nome: "Conjunto Oxaguian 1", preco: "60,00", img: "Conjunto Oxaguian 1 60,00.jpeg" },
+    { nome: "Conjunto Oxaguian 2", preco: "70,00", img: "Conjunto Oxaguian 2 70,00.jpeg" },
+    { nome: "Conjunto Oxaguian 3", preco: "75,00", img: "Conjunto Oxaguian 3 75,00.jpeg" },
+    { nome: "Conjunto Oxalá/Oxalufã", preco: "75,00", img: "Conjunto OxaláOxalufan 75,00.jpeg" },
+    { nome: "Conjunto Omolu 1", preco: "80,00", img: "Conjunto Omolu 1 80,00.jpeg" },
+    { nome: "Conjunto Omolu 2", preco: "75,00", img: "Conjunto Omolu 2 75,00.jpeg" },
+    { nome: "Conjunto Ajê", preco: "80,00", img: "Conjunto Ajê 80,00.jpeg" },
+    { nome: "Conjunto Oxum", preco: "80,00", img: "Conjunto Oxum 80,00.jpeg" },
+    { nome: "Conjunto Oxum II", preco: "75,00", img: "Conjunto Oxum 75,00.jpeg" },
+    { nome: "Conjunto Yemanjá 1", preco: "80,00", img: "Conjunto Yemanjá 1 80,00.jpeg" },
+    { nome: "Conjunto Yemanjá 2", preco: "80,00", img: "Conjunto Yemanjá 2 80,00.jpeg" },
+    { nome: "Conjunto Obá", preco: "70,00", img: "Conjunto Obá 70,00.jpeg" },
+    { nome: "Conjunto Yewá", preco: "75,00", img: "Conjunto Yewá 75,00.jpeg" },
+    { nome: "Conjunto Yansã", preco: "80,00", img: "Conjunto Yansã 80,00.jpeg" },
+    { nome: "Conjunto Nanã", preco: "75,00", img: "Conjunto Nanã 75,00.jpeg" },
+    { nome: "Conjunto Ogum 1", preco: "75,00", img: "Conjunto Ogum 1 75,00.jpeg" },
+    { nome: "Conjunto Ogum 2", preco: "75,00", img: "Conjunto Ogum 2 75,00.jpeg" },
+    { nome: "Conjunto Ogum 3", preco: "75,00", img: "Conjunto Ogum 3 75,00.jpeg" },
+    { nome: "Conjunto Oxóssi 1", preco: "75,00", img: "Conjunto Oxóssi 1 75,00.jpeg" },
+    { nome: "Conjunto Oxóssi 2", preco: "75,00", img: "Conjunto Oxóssi 2 75,00.jpeg" },
+    { nome: "Conjunto Oxóssi 3", preco: "75,00", img: "Conjunto Oxóssi 3 75,00.jpeg" },
+    { nome: "Conjunto Xangô 1", preco: "75,00", img: "Conjunto Xangô 1 75,00.jpeg" },
+    { nome: "Conjunto Xangô 2", preco: "75,00", img: "Conjunto Xangô 2 75,00.jpeg" },
+    { nome: "Conjunto Ayrá", preco: "75,00", img: "Conjunto Ayrá 75,00.jpeg" },
+    { nome: "Conjunto Oxumarê", preco: "75,00", img: "Conjunto Oxumare 75,00.jpeg" },
+    { nome: "Conjunto Ossain", preco: "75,00", img: "Conjunto Ossain 75,00.jpeg" },
+    { nome: "Conjunto Caboclo", preco: "75,00", img: "Conjunto Caboclo 75,00.jpeg" },
+    { nome: "Conjunto Cabocla", preco: "75,00", img: "Conjunto Cabocla 75,00.jpeg" },
+    { nome: "Proteção Ogum", preco: "60,00", img: "Conjunto proteção Ogum 60,00.jpeg" },
+    { nome: "Proteção Exu", preco: "60,00", img: "Conjunto proteção Exu 60,00.jpeg" },
+    { nome: "Proteção 7 Linhas", preco: "55,00", img: "Conjunto proteção 7 linhas 55,00.jpeg" },
+  ],
+  ilekes: [
+    { nome: "Ilekê Oxalá/Oxalufã", preco: "180,00", img: "Ilekê OxaláOxalufan 180,00.jpeg" },
+    { nome: "Ilekê Oxóssi", preco: "180,00", img: "Ilekê Oxóssi 180,00.jpeg" },
+    { nome: "Ilekê Xangô", preco: "180,00", img: "Ilekê Xangô 180,00.jpeg" },
+    { nome: "Ilekê Ogum", preco: "180,00", img: "Ilekê Ogum 180,00.jpeg" },
+    { nome: "Ilekê Logun Edé", preco: "200,00", img: "Ilekê Logun Edé 200,00.jpeg" },
+    { nome: "Ilekê Omolu", preco: "180,00", img: "Ilekê Omolu 180,00.jpeg" },
+  ],
+};
+
+let editando = null; // { categoria, index } quando estiver editando um item existente
+
+/* ---------- Preenche o nome do arquivo ao escolher a foto ---------- */
+document.getElementById("f-arquivo-picker").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) document.getElementById("f-arquivo").value = file.name;
+});
+
+function limparFormulario() {
+  document.getElementById("f-nome").value = "";
+  document.getElementById("f-preco").value = "";
+  document.getElementById("f-arquivo").value = "";
+  document.getElementById("f-arquivo-picker").value = "";
+  document.getElementById("f-categoria").value = "conjuntos";
+  editando = null;
+  document.getElementById("btn-add").textContent = "Adicionar";
+}
+
+function adicionarOuSalvar() {
+  const nome = document.getElementById("f-nome").value.trim();
+  const preco = document.getElementById("f-preco").value.trim();
+  const img = document.getElementById("f-arquivo").value.trim();
+  const categoria = document.getElementById("f-categoria").value;
+
+  if (!nome || !preco || !img) {
+    alert("Preencha nome, preço e o nome do arquivo da foto.");
+    return;
+  }
+
+  const item = { nome, preco, img };
+
+  if (editando) {
+    // Se mudou de categoria, remove da antiga e adiciona na nova
+    if (editando.categoria !== categoria) {
+      CATEGORIAS[editando.categoria].splice(editando.index, 1);
+      CATEGORIAS[categoria].push(item);
+    } else {
+      CATEGORIAS[categoria][editando.index] = item;
+    }
+  } else {
+    CATEGORIAS[categoria].push(item);
+  }
+
+  limparFormulario();
+  renderLista();
+  gerarCodigo();
+}
+
+function editarItem(categoria, index) {
+  const item = CATEGORIAS[categoria][index];
+  document.getElementById("f-nome").value = item.nome;
+  document.getElementById("f-preco").value = item.preco;
+  document.getElementById("f-arquivo").value = item.img;
+  document.getElementById("f-categoria").value = categoria;
+  editando = { categoria, index };
+  document.getElementById("btn-add").textContent = "Salvar alteração";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function removerItem(categoria, index) {
+  if (!confirm(`Remover "${CATEGORIAS[categoria][index].nome}"?`)) return;
+  CATEGORIAS[categoria].splice(index, 1);
+  renderLista();
+  gerarCodigo();
+}
+
+function renderLista() {
+  ["conjuntos", "ilekes"].forEach((categoria) => {
+    const container = document.getElementById(`lista-${categoria}`);
+    container.innerHTML = "";
+    CATEGORIAS[categoria].forEach((p, i) => {
+      const el = document.createElement("div");
+      el.className = "card-item rounded p-4 flex items-center justify-between gap-3";
+      el.innerHTML = `
+        <div class="min-w-0">
+          <p class="text-white text-sm truncate">${p.nome}</p>
+          <p class="text-neutral-500 text-xs">R$ ${p.preco} · ${p.img}</p>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button onclick="editarItem('${categoria}', ${i})" class="text-xs gold hover:underline">Editar</button>
+          <button onclick="removerItem('${categoria}', ${i})" class="text-xs text-red-400 hover:underline">Remover</button>
+        </div>
+      `;
+      container.appendChild(el);
+    });
+    document.getElementById(`count-${categoria}`).textContent = `(${CATEGORIAS[categoria].length})`;
+  });
+}
+
+/* ---------- Gera o texto exatamente no formato usado no index.html ---------- */
+function gerarCodigo() {
+  const linha = (p) => `    { nome: "${p.nome}", preco: "${p.preco}", img: "${p.img}" },`;
+
+  let saida = "const CATEGORIAS = {\n";
+  saida += "  conjuntos: [\n";
+  saida += CATEGORIAS.conjuntos.map(linha).join("\n") + "\n";
+  saida += "  ],\n";
+  saida += "  ilekes: [\n";
+  saida += CATEGORIAS.ilekes.map(linha).join("\n") + "\n";
+  saida += "  ],\n";
+  saida += "};";
+
+  document.getElementById("saida").value = saida;
+}
+
+function copiarCodigo() {
+  const saida = document.getElementById("saida");
+  saida.select();
+  navigator.clipboard.writeText(saida.value).then(() => {
+    document.getElementById("copiado").classList.remove("hidden");
+    setTimeout(() => document.getElementById("copiado").classList.add("hidden"), 4000);
+  });
+}
+
+renderLista();
+gerarCodigo();
+</script>
+</body>
+</html>
