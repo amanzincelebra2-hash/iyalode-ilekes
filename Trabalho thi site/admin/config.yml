@@ -3,8 +3,9 @@ backend:
   branch: main
 
 # Onde as fotos novas são salvas quando você faz upload pelo painel.
-# Deixamos na raiz do site, junto com as fotos que já existem.
-media_folder: ""
+# O caminho inclui "Trabalho thi site" porque é onde a pasta do site
+# está dentro do repositório do GitHub.
+media_folder: "Trabalho thi site"
 public_folder: ""
 
 locale: "pt"
@@ -13,7 +14,7 @@ collections:
   - name: "produtos"
     label: "Produtos"
     files:
-      - file: "content/produtos.json"
+      - file: "Trabalho thi site/content/produtos.json"
         label: "Catálogo de Produtos"
         name: "catalogo"
         fields:
